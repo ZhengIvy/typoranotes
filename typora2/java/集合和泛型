@@ -1,0 +1,499 @@
+# Collection
+
+![img](https://img-blog.csdn.net/20160706172512559?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+### 前情提要
+
+1. 接口可以继承接口，类只能使用接口
+
+   
+
+### 1.泛型(generics)
+
+#### 泛型类
+
+在Collection 当中，如果没有泛型即意味着不同种包装类都可以加入，但我们一般的需求是只要一组Integer的ArrayList或者其他的统一类型，因此在这里泛型意味着更好的类型安全性。
+
+```java
+List<Integer> values = new ArrayList<>();//此处的Integer实际上为E，代表用来创建与初始的类型
+			values.add(5);
+			values.add(1);
+			values.add(9);
+			values.add(2, 3);//List 可以进行插入，但是Collection 不可以
+			for(int i=0;i<values.size();i++) {//两种输出方式
+				System.out.println(values.get(i));
+			}
+			for(Integer a:values) {
+				System.out.println(a);
+			}
+```
+
+
+
+#### 泛型方法
+
+> 泛型方法在这里有些 不同，首先在返回类型前面要声明一个类型参数T，即为type，用到的是包装类，在下面有表示。一旦T被确定之后就会用到各个T当中，无需再次声明。
+
+```java
+public class Ccount {
+	 
+	public static void main(String[] args) {
+		Character[] cha= {'a','n','c'};//注意是包装类不是基本类型
+		Integer[] in= {1,2,3,4,5};
+		show(cha);
+		show(in);
+	}
+	
+	public static <T>void show(T[] x) {//T的类型保持一致
+		for(T b:x) {
+			System.out.println(b);
+		}
+		System.out.println();
+	}
+}
+```
+
+```java
+public class Ccount {
+	 
+	public static void main(String[] args) {
+		System.out.println(max(23,42,1));
+		System.out.println(max("car","care","to"));
+	}
+	public static <T extends Comparable<T>> T max(T a,T b,T c) {//T表示T必须是又实现Comparable的类型(Comparable在此处为接口，后续会提到)
+		T m=a;
+		if(b.compareTo(a)>0) {
+			m=b;
+		}
+		if(c.compareTo(m)>0) {
+			m=c;
+		}
+		return m;
+	}
+}
+```
+
+
+
+##### 注意：
+
+在泛型中，extends 表示extends 或implements，因此无论是继承父类还是使用接口都用extends。
+
+#### 关于\<T>与<?>，\<? extends T>与<? super T>，List 和List<？>的区别
+
+>历经千辛万苦，各种搜查终于找到区别了
+
+#### 1.<?> 和\<T>
+
+<?>一般是用在引用变量上，代表一个list可以有多种元素类型，没有限制（除非extends 和super去限制他）
+
+<span style='color:red'>错误例子</span>
+
+```java
+ArrayList<?> food=new ArraList<>();
+food.add(3);
+food.add("q");
+```
+
+<span style='color:red'>正确例子</span>
+
+```java
+class Drink {
+	public void display(ArrayList<?> a) {
+		for(Object b:a) {
+			System.out.println(b);
+		}
+	}
+}
+public class Minute {
+	public static void main(String[] args) {
+		ArrayList food=new ArrayList();
+		food.add(2);
+		food.add("q");
+		Drink eee= new Drink();
+		eee.display(food);
+	}
+}
+```
+
+\<T>一般是代表一种类型，一旦确定后就只能输入含有该类型的list
+
+```java
+class Drink {
+	public<T> void display(ArrayList<T> a) {
+		for(Object b:a) {
+			System.out.println(b);
+		}
+	}
+}
+public class Minute {
+	public static void main(String[] args) {
+		ArrayList<Integer> food=new ArrayList<>();
+		food.add(2);
+		food.add(3);
+		Drink eee= new Drink();
+		eee.display(food);
+	}
+}
+```
+
+#### 2.\<? extends T>与<? super T>
+
+其实这实际上是对？的限制，前者是下限为T，后者的意思是？是T的父类，？包含了T
+
+```java
+List<? extends Number> food//(与 ? extends T一个意思)
+//可表示为
+List<? extends Number> food= new ArrayList<Number>();
+List<? extends Number> food= new ArrayList<Double>();
+List<? extends Number> food= new ArrayList<Integer>();
+```
+
+```java
+List<? super Integer> food//(与 ? super T一个意思)
+List<? super Integer> food= new List<Number>();
+List<? super Integer> food= new List<Integer>();
+List<? super Integer> food= new List<Object>();
+```
+
+#### 3.List 和List<？>
+
+两者都可以表示一个list中有不同种类型的元素。
+
+**List**
+
+虽然你你不知道在list中会放进什么类型的元素，但list是一种原始类型，你随意放进一些不同类型的元素可能会破坏这个list里面元素的类型，比如说是可能你想要一个Integer的list 但是因为这是原始类型你还可以输进别的类型的元素，这就破坏了本意。
+
+**List<?>**
+
+这个同样代表了一个list中可以放入多种类型的元素，但?表明你已经确定好，得到保证这个list确实可以有不同类型的元素，可以保证类型的安全。
+
+### 2.List
+
+<img src="C:\Users\zbr\AppData\Roaming\Typora\typora-user-images\image-20200321133813561.png" alt="image-20200321133813561" style="zoom:50%;" />
+
+**这三个类都有implements List**
+
+> ![image-20200321082439324](C:\Users\zbr\AppData\Roaming\Typora\typora-user-images\image-20200321082439324.png)
+
+#### ArrayList VS Vector
+
+| Array                                                        | ArrayList                                                   |
+| ------------------------------------------------------------ | ----------------------------------------------------------- |
+| 不是动态的，数组的长度是先确定好的，可能存在超出数组长度的情况 | 是动态的，初始容量是10，每次以50%增加，当超过原来容量的时候 |
+
+| ArrayList                               | Vector                                |
+| --------------------------------------- | ------------------------------------- |
+| not synchronized/线程不安全             | synchronized/线程安全                 |
+| 当超过原来容量时，每次以50%增加         | 当超过原来容量时，每次以100%增加      |
+| 不可以使用capacity method来查看容量情况 | 可以使用capacity method来查看容量情况 |
+| 比较快(因为不是同步化的)                | 比较慢（因为是同步化）                |
+
+```java
+ArrayList<Integer> v= new ArrayList<>();
+		v.add(7);
+		v.add(1);
+		v.add(5);
+		System.out.println(v.size());
+		for(int a:v) {
+			System.out.println(a);
+		}
+//3
+//7
+//1
+//5
+```
+
+```java
+Vector<Integer> v= new Vector<>();
+		v.add(7);
+		v.add(1);
+		v.add(5);
+		System.out.println("The size is "+v.size());
+		System.out.println("The capacity is "+v.capacity());
+		for(int a:v) {
+			System.out.println(a);
+		}
+//The size is 3
+//The capacity is 10
+//7
+//1
+//5
+```
+
+#### 总结ArrayList 和Vector
+
+在通常情况下，ArrayList是比较好的选择，原因：
+
+1. ArrayList 每次增长的容量都较少，不会占太多的空间
+2. ArrayList 比较快与Vector相比较
+
+#### LinkedList VS ArrayList
+
+> 这里的链表是双向链表
+
+| LinkedList                                                   | ArrayList                                                    |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 在插入和删除节点中的元素时，时间耗费较少，最坏的情况是O(n)，通常情况下是O(1) | 在插入和删除时，具有“牵一发而动全身”的属性，如果是增加，后面的数字都要往后移一个，删除同理，O(n) |
+| 在获取确定的某个节点的值需要遍历，O(n)                       | 可以直接通过index 获取，O(1)                                 |
+| 由于是双向链表，在每个节点都要耗费较大的空间储存地址         | 在结尾有预留一定的容量，没有使用到，这是消耗空间的地方       |
+
+#### 总结ArrayList 和LinkedList
+
+在通常情况下，ArrayList是比较好的选择（除非对插入删除的功能有比较大的要求时），原因：
+
+1.在数组变动不大，一般是使用查询功能时，速度比较快。
+
+2.由于是动态的数组，没有array 的缺点，不用对超过数组长度的数组进行另外的搬运，所以在消耗的空间也较小
+
+#### 关于collection和List接口使用
+
+首先，List是继承collection的。
+
+但是collection在使用时，collection 没有具体像数组的对应位置
+
+eg：
+
+| 0    | 7    |
+| ---- | ---- |
+| 1    | 10   |
+| 2    | 67   |
+| 3    | 90   |
+
+**所以不能在指定位置添加元素，也不可以获取某位置的元素**
+
+### 3.Set
+
+Set首先一个明显的特点是不允许重复的元素插入，如果有重复的元素插入的话会把原来的元素覆盖掉
+
+HashSet和TreeSet都是使用Set接口的类
+
+#### 1.Hash set
+
+Hash set 的特点：
+
+1. 元素的输出顺序与输入顺序不一致，Hash set 内部自己有某种算法来将输入的元素进行整合然后取最靠近的元素输出。
+2. 没有线程安全，函数没有同步，所以速度较快
+
+**在后面的HashMap有用到Hash set**
+
+```java
+public static void main(String[] args) {
+		Set<Integer> values= new HashSet<>();
+		values.add(54);
+		values.add(67);
+		values.add(94);
+		System.out.println(values.add(67));//返回类型是boolean
+		for(int i:values) {
+			System.out.println(i);
+		}
+	}
+```
+
+#### 2.TreeSet
+
+与Hash set 不同，TreeSet输出的元素都是从小到大排好序的
+
+```java
+public static void main(String[] args) {
+		Set<Integer> set=new TreeSet<>();
+		set.add(4);
+		set.add(5);
+		set.add(8);
+		set.add(1);
+		for(Integer a:set) {
+			System.out.println(a);
+		}
+   //1
+//4
+//5
+//8
+ 
+```
+
+### 4.Map
+
+**map是接口，hash table 和hashmap都是使用map的类**
+
+<img src="C:\Users\zbr\AppData\Roaming\Typora\typora-user-images\image-20200321220631269.png" alt="image-20200321220631269" style="zoom: 67%;" />
+
+**public interface Map<K,V>**
+
+**类型参数：**
+ **K - 此映射所维护的键的类型**
+ **V - 映射值的类型**
+
+>正如List可以通过index来找到对应的值，Map可以通过key来找到对应的值
+
+#### 1.HashMap
+
+因为也是hash ，所以输出的顺序与输入的顺序不一致
+
+```java
+public static void main(String[] args) {
+		Map<String,String> m= new HashMap();
+		m.put("myname","Ivy");
+		m.put("actor","Tarjei");
+		System.out.println(m);
+		
+	}
+	//{actor=Tarjei, myname=Ivy}
+
+```
+
+#### 2.Hashtable
+
+```java
+public static void main(String[] args) {
+		Map<String,String> m= new Hashtable();
+		m.put("myname","Ivy");
+		m.put("actor","Tarjei");
+		System.out.println(m);
+		}
+	
+```
+
+与HashMap相比，代码没有多大区别，但是还是存在一些不一样的地方的
+
+#### 3.HashMap与Hashtable的比较
+
+| HashMap                | Hashtable          |
+| ---------------------- | ------------------ |
+| 线程不安全，没有同步化 | 线程安全，有同步化 |
+| 速度较快               | 速度较慢           |
+| 允许空key              | 不允许空key        |
+
+总的来说，使用HashMap的效率较高
+
+#### 4.Map的输出
+
+与set和list不一样，Map的输出方式有所不同。
+
+```java
+public static void main(String[] args) {
+		Map<String,String> m= new Hashtable();
+		m.put("myname","Ivy");
+		m.put("actor","Tarjei");
+		System.out.println(m);
+		Set<String> keys=m.keySet();
+		for(String s:keys) {
+			System.out.println(s+" "+m.get(s));
+		}
+		}
+//{actor=Tarjei, myname=Ivy}
+//actor Tarjei
+//myname Ivy
+
+```
+
+### 5.Comparable 和Comparator
+
+这两个接口都是使用在排序的时候，根据元素类型的不同，可以自定义如何进行排序。
+
+#### 1.Comparable的运用
+
+##### 特点：
+
+1. 是排序接口，如果一个类可以使用该接口，则表示这个类是支持comparable运用的排序的。
+2. 通常的排序是常见的，有逻辑性的，比如说数字的大小和String的排序
+
+![image-20200321224030484](C:\Users\zbr\AppData\Roaming\Typora\typora-user-images\image-20200321224030484.png)
+
+![image-20200321224149152](C:\Users\zbr\AppData\Roaming\Typora\typora-user-images\image-20200321224149152.png)
+
+仔细看发现是有返回值的，若返回负数，意味着mark比o.mark小；返回零，意味着mark等于o.mark；返回正数，意味着mark大于o.mark
+
+```java
+
+class Stud implements Comparable<Stud>{//对学生的学号，成绩或者是名字进行排序
+	int rollno;
+	int marks;
+	String name;
+	public Stud(int rollno,String name,int marks) {//构造器
+		super();
+		this.rollno = rollno;
+		this.marks = marks;
+		this.name = name;
+	}
+	@Override
+	public String toString() {
+		return "Stud [rollno=" + rollno + ", marks=" + marks + ", name=" + name + "]";
+	}
+	@Override
+	public int compareTo(Stud o) {//进行重写
+		return marks>o.marks ? 1: -1;
+	}
+}
+public class Count {
+		public static void main(String[] args){
+		List<Stud> studs=new ArrayList<>();
+		studs.add(new Stud(23,"Ivy",60));
+		studs.add(new Stud(11,"Peter",40));
+		Collections.sort(studs);
+		for(Stud s:studs ) {
+			System.out.println(s);
+		}
+		}	
+	}
+	//Stud [rollno=11, marks=40, name=Peter]
+//Stud [rollno=23, marks=60, name=Ivy]
+//根据成绩进行了排序
+```
+
+#### 2.Comparator的运用
+
+##### 特点：
+
+1. 是一个只有一个抽象方法的接口，所以可以使用lambda expression，简化代码
+2. 是比较器接口，如果一个类能使用comparable的接口的话，或者说是需要自己定义排序的方式就可以使用comparator
+3. 当同时使用了comparator 和comparable接口时，以comparator的为准
+
+以下代码是在以上代码的延伸。(28行为修改的地方)
+
+```java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+class Stud implements Comparable<Stud>{//对学生的学号，成绩或者是名字进行排序
+	int rollno;
+	int marks;
+	String name;
+	public Stud(int rollno,String name,int marks) {//构造器
+		super();
+		this.rollno = rollno;
+		this.marks = marks;
+		this.name = name;
+	}
+	@Override
+	public String toString() {
+		return "Stud [rollno=" + rollno + ", marks=" + marks + ", name=" + name + "]";
+	}
+	@Override
+	public int compareTo(Stud o) {//进行重写
+		return marks>o.marks ? 1: -1;
+	}
+}
+public class Count {
+		public static void main(String[] args){
+		List<Stud> studs=new ArrayList<>();
+		studs.add(new Stud(23,"Ivy",60));
+		studs.add(new Stud(11,"Peter",40));
+		Collections.sort(studs,(i,j)->i.name.length()>j.name.length()?1:-1);//根据名字的长度进行排序
+		for(Stud s:studs ) {
+			System.out.println(s);
+		}
+		}	
+	}
+//Stud [rollno=23, marks=60, name=Ivy]
+//Stud [rollno=11, marks=40, name=Peter]
+```
+
+### 6. set和list的区别
+
+|                     set                      |                       list                       |
+| :------------------------------------------: | :----------------------------------------------: |
+|                 不能重复元素                 |                   可以重复元素                   |
+| 输出顺序与输入输入顺序可能不太，依据情况而定 |              输出顺序与输入顺序相同              |
+|              只能输入一个空元素              |                可以输入多个空元素                |
+|                用iterator遍历                | 可以用listiterator 和iterator 进行遍历不同的方向 |
+

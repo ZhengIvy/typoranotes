@@ -1,0 +1,27 @@
+# Annotation(注解)
+
+### 1.Override
+
+在子类继承父类时重写方法，如果是手打，有可能少打或错打一个单词，那可能你使用的结果就会不同
+
+所以就是Override派上用场，写上Override之后他就会提醒你如果写错的
+
+### 2.@functionalinterface
+
+就是提醒你，只能写一个抽象方法
+
+![image-20200322001027262](C:\Users\zbr\AppData\Roaming\Typora\typora-user-images\image-20200322001027262.png)
+
+有蛮多的把，目前遇到的是Runnable和Comparator
+
+### 3.SuppressWarning
+
+![image-20200322000730787](C:\Users\zbr\AppData\Roaming\Typora\typora-user-images\image-20200322000730787.png)
+
+就可以压住warning，但具体的使用还不是很会， 我觉得从理解上来讲的话是把checked 的exception 变成unchecked，这样编译器就不管了
+
+### 4.Deprecated
+
+就是有一条线，提醒你不要去用他![image-20200322001332740](C:\Users\zbr\AppData\Roaming\Typora\typora-user-images\image-20200322001332740.png)
+
+像这样子
